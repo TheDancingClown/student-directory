@@ -12,28 +12,11 @@ def try_load_students
   end
 end
 
-def print_menu
-  puts "1. Input the students"
-  puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
-  puts "9. Exit"
-end
-
-def show_students
-  print_header
-  print_students_list
-  print_footer
-end
-
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  @students = []
-  file.readlines.each do |line|
-  name, cohort = line.chomp.split(',')
-    add_students(name, cohort)
+def interactive_menu
+  loop do
+    print_menu
+    process(STDIN.gets.chomp)
   end
-  file.close
 end
 
 def process(selection)
@@ -53,11 +36,12 @@ def process(selection)
   end
 end
 
-def interactive_menu
-  loop do
-    print_menu
-    process(STDIN.gets.chomp)
-  end
+def print_menu
+  puts "1. Input the students"
+  puts "2. Show the students"
+  puts "3. Save the list to students.csv"
+  puts "4. Load the list from students.csv"
+  puts "9. Exit"
 end
 
 def input_students
@@ -69,6 +53,16 @@ def input_students
     puts "Now we have #{@students.count} students"
     name = STDIN.gets.chomp
   end
+end
+
+def add_students(name, cohort = :september)
+  @students << {name: name, cohort: cohort.to_sym}
+end
+
+def show_students
+  print_header
+  print_students_list
+  print_footer
 end
 
 def print_header
@@ -94,10 +88,18 @@ def save_students
     file.puts csv_line
   end
   file.close
+  puts "File saved"
 end
 
-def add_students(name, cohort = :september)
-  @students << {name: name, cohort: cohort.to_sym}
+def load_students(filename = "students.csv")
+  file = File.open(filename, "r")
+  @students = []
+  file.readlines.each do |line|
+  name, cohort = line.chomp.split(',')
+    add_students(name, cohort)
+  end
+  file.close
+  puts "#{filename} saved"
 end
 
 try_load_students
