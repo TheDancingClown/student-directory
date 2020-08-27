@@ -88,25 +88,25 @@ end
 
 def save_students
   get_filename
-  file = File.open(@filename, "w")
-  @students.each do |student|
-    student_data = [student[:name], student[:cohort]]
-    csv_line = student_data.join(",")
-    file.puts csv_line
+  File.open(@filename, "w") do |f|
+    @students.each do |student|
+      student_data = [student[:name], student[:cohort]]
+      csv_line = student_data.join(",")
+      f.puts csv_line
+    end
   end
-  file.close
   puts "#{@filename} saved"
 end
 
 def load_students
   get_filename
-  file = File.open(@filename, "r")
   @students = []
-  file.readlines.each do |line|
-  name, cohort = line.chomp.split(',')
-    add_students(name, cohort)
+  File.open(@filename, "r") do |f|
+    f.each_line do |line|
+    name, cohort = line.chomp.split(',')
+      add_students(name, cohort)
+    end
   end
-  file.close
   puts "#{@filename} loaded"
 end
 
