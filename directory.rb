@@ -1,4 +1,5 @@
 @students = []
+@filename = "students.csv"
 
 def try_load_students
   filename = ARGV.first
@@ -39,8 +40,8 @@ end
 def print_menu
   puts "1. Input the students"
   puts "2. Show the students"
-  puts "3. Save the list to students.csv"
-  puts "4. Load the list from students.csv"
+  puts "3. Save the list"
+  puts "4. Load the list"
   puts "9. Exit"
 end
 
@@ -80,26 +81,33 @@ def print_footer
   puts "Overall, we have #{@students.count} great students"
 end
 
+def get_filename
+  puts "Enter the filename"
+  @filename = STDIN.gets.chomp
+end
+
 def save_students
-  file = File.open("students.csv", "w")
+  get_filename
+  file = File.open(@filename, "w")
   @students.each do |student|
     student_data = [student[:name], student[:cohort]]
     csv_line = student_data.join(",")
     file.puts csv_line
   end
   file.close
-  puts "File saved"
+  puts "#{@filename} saved"
 end
 
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
+def load_students
+  get_filename
+  file = File.open(@filename, "r")
   @students = []
   file.readlines.each do |line|
   name, cohort = line.chomp.split(',')
     add_students(name, cohort)
   end
   file.close
-  puts "#{filename} saved"
+  puts "#{@filename} loaded"
 end
 
 try_load_students
