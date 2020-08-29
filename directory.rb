@@ -65,8 +65,10 @@ def add_students(name, cohort = :september)
 end
 
 def show_students
-  print_header
-  print_students_list
+  if @students.count != 0
+    print_header
+    print_students_list
+  end
   print_footer
 end
 
