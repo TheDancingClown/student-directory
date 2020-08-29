@@ -1,3 +1,4 @@
+require 'csv'
 @students = []
 @filename = "students.csv"
 
@@ -72,7 +73,7 @@ def print_header
 end
 
 def print_students_list
-  @students.each do |student|
+  @students.map do |student|
     puts "#{student[:name]} (#{student[:cohort]} cohort)"
   end
 end
@@ -88,24 +89,18 @@ end
 
 def save_students
   get_filename
-  File.open(@filename, "w") do |f|
-    @students.each do |student|
-      student_data = [student[:name], student[:cohort]]
-      csv_line = student_data.join(",")
-      f.puts csv_line
+  CSV.open(@filename, "w", write_headers: true, headers: @students.first.keys)  do |csv|
+    @students.each do |h|
+      csv << h.values
     end
+    puts "#{@filename} saved"
   end
-  puts "#{@filename} saved"
 end
 
 def load_students
   get_filename
-  @students = []
-  File.open(@filename, "r") do |f|
-    f.each_line do |line|
-    name, cohort = line.chomp.split(',')
-      add_students(name, cohort)
-    end
+  CSV.foreach(@filename, {:headers => true, :header_converters => :symbol}) do |row|
+    add_students(row[:name], row[:cohort])
   end
   puts "#{@filename} loaded"
 end
