@@ -6,7 +6,8 @@ def try_load_students
   filename = ARGV.first
   return if filename.nil?
   if File.exists?(filename)
-    load_students(filename)
+    @filename = filename
+    load_students
     puts "Loaded #{@students.count} from #{filename}"
   else
     puts "sorry, #{filename} doesn't exist."
@@ -28,8 +29,10 @@ def process(selection)
   when "2"
     show_students
   when "3"
+    get_filename
     save_students
   when "4"
+    get_filename
     load_students
   when "9"
     exit
@@ -88,7 +91,6 @@ def get_filename
 end
 
 def save_students
-  get_filename
   CSV.open(@filename, "w", write_headers: true, headers: @students.first.keys)  do |csv|
     @students.each do |h|
       csv << h.values
@@ -98,7 +100,7 @@ def save_students
 end
 
 def load_students
-  get_filename
+  @students = []
   CSV.foreach(@filename, {:headers => true, :header_converters => :symbol}) do |row|
     add_students(row[:name], row[:cohort])
   end
